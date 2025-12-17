@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/nct-admin-head :: adminHead(pageTitle='Quản lý Đơn hàng - Admin')}"></head>
+<body>
+<!-- Sidebar -->
+<div th:replace="~{fragments/nct-admin-sidebar :: adminSidebar(activePage='orders')}"></div>
+
+<!-- Main Content -->
+<main class="main-content">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center nct-page-header">
+        <div>
+            <h1 class="h2 mb-2">
+                <i class="fas fa-shopping-cart me-2 text-primary"></i>Quản lý Đơn hàng
+            </h1>
+            <p class="text-muted mb-0">Quản lý tất cả đơn hàng trong hệ thống</p>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <div class="col mb-3">
+            <div class="card nct-card text-center p-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                <i class="fas fa-clock fa-2x mb-2"></i>
+                <h4 th:text="${nctPendingCount}">0</h4>
+                <small>Chờ xác nhận</small>
+            </div>
+        </div>
+        <div class="col mb-3">
+            <div class="card nct-card text-center p-3" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+                <i class="fas fa-check-circle fa-2x mb-2"></i>
+                <h4 th:text="${nctConfirmedCount}">0</h4>
+                <small>Đã xác nhận</small>
+            </div>
+        </div>
+        <div class="col mb-3">
+            <div class="card nct-card text-center p-3" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
+                <i class="fas fa-shipping-fast fa-2x mb-2"></i>
+                <h4 th:text="${nctShippingCount}">0</h4>
+                <small>Đang giao</small>
+            </div>
+        </div>
+        <div class="col mb-3">
+            <div class="card nct-card text-center p-3" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white;">
+                <i class="fas fa-box-open fa-2x mb-2"></i>
+                <h4 th:text="${nctDeliveredCount}">0</h4>
+                <small>Đã giao</small>
+            </div>
+        </div>
+        <div class="col mb-3">
+            <div class="card nct-card text-center p-3" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white;">
+                <i class="fas fa-times-circle fa-2x mb-2"></i>
+                <h4 th:text="${nctCancelledCount}">0</h4>
+                <small>Đã hủy</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Messages -->
+    <div th:if="${nctSuccess}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle me-2"></i>
+        <span th:text="${nctSuccess}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${nctError}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        <span th:text="${nctError}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <!-- Search and Filter Form -->
+    <div class="card nct-card mb-4">
+        <div class="card-body">
+            <form th:action="@{/admin/orders}" method="get" class="row g-3 align-items-center">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" name="keyword" class="form-control" placeholder="Tìm theo tên khách hàng hoặc mã ĐH..." th:value="${keyword}">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-filter"></i></span>
+                        <select name="status" class="form-select">
+                            <option value="">Tất cả trạng thái</option>
+                            <option th:each="s : ${T(k23cnt3.nguyencongtung.project3.entity.NctOrder.NctOrderStatus).values()}"
+                                    th:value="${s.name()}"
+                                    th:text="${s.displayName}"
+                                    th:selected="${status != null and status.equalsIgnoreCase(s.name())}"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">Lọc</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Orders Table -->
+    <div class="card nct-card">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table nct-table mb-0">
+                    <thead>
+                    <tr>
+                        <th>Mã ĐH</th>
+                        <th>Khách hàng</th>
+                        <th>Ngày đặt</th>
+                        <th class="text-end">Tổng tiền</th>
+                        <th class="text-center">Trạng thái</th>
+                        <th class="text-center">Thao tác</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="order : ${nctOrderPage.content}">
+                        <td class="fw-bold" th:text="'#' + ${order.nctOrderId}"></td>
+                        <td th:text="${order.nctUser.nctFullName}"></td>
+                        <td th:text="${#temporals.format(order.nctCreatedAt, 'dd/MM/yyyy HH:mm')}"></td>
+                        <td class="text-end fw-bold" th:text="${order.nctFormattedTotal}"></td>
+                        <td class="text-center">
+                            <span th:classappend="'badge bg-' + ${order.nctStatusColor}"
+                                  class="badge"
+                                  th:text="${order.nctStatusDisplayName}"></span>
+                        </td>
+                        <td class="text-center">
+                            <a th:href="@{/admin/orders/view/{id}(id=${order.nctOrderId})}"
+                               class="btn btn-sm btn-outline-primary nct-action-btn"
+                               title="Xem chi tiết">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Empty State -->
+    <div th:if="${nctOrderPage.empty}" class="text-center py-5">
+        <i class="fas fa-search-minus fa-4x text-muted mb-3"></i>
+        <h4 class="text-muted">Không tìm thấy đơn hàng nào</h4>
+        <p class="text-muted">Hãy thử thay đổi bộ lọc hoặc từ khóa tìm kiếm của bạn.</p>
+    </div>
+
+    <!-- Pagination -->
+    <nav th:if="${nctOrderPage.totalPages > 1}" aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            <!-- Previous Page Link -->
+            <li class="page-item" th:classappend="${nctOrderPage.isFirst()} ? 'disabled'">
+                <a class="page-link" th:href="@{/admin/orders(page=${currentPage - 1}, size=${nctOrderPage.size}, keyword=${keyword}, status=${status})}">Trước</a>
+            </li>
+
+            <!-- Page Numbers -->
+            <th:block th:each="i : ${#numbers.sequence(1, nctOrderPage.totalPages)}">
+                <li class="page-item" th:if="${i >= currentPage - 2 and i <= currentPage + 2}" th:classappend="${i == currentPage} ? 'active'">
+                    <a class="page-link" th:href="@{/admin/orders(page=${i}, size=${nctOrderPage.size}, keyword=${keyword}, status=${status})}" th:text="${i}"></a>
+                </li>
+            </th:block>
+
+            <!-- Next Page Link -->
+            <li class="page-item" th:classappend="${nctOrderPage.isLast()} ? 'disabled'">
+                <a class="page-link" th:href="@{/admin/orders(page=${currentPage + 1}, size=${nctOrderPage.size}, keyword=${keyword}, status=${status})}">Sau</a>
+            </li>
+        </ul>
+    </nav>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

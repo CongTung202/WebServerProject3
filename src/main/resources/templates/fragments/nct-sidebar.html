@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<body>
+
+<aside th:fragment="sidebar(activePage)" class="sidebar">
+    <!-- Main Navigation -->
+    <a th:href="@{/}" th:class="${activePage == 'home' ? 'sidebar-item active' : 'sidebar-item'}">
+        <i class="fas fa-home"></i>
+        <span>Trang chủ</span>
+    </a>
+    <a th:href="@{/products}" th:class="${activePage == 'products' ? 'sidebar-item active' : 'sidebar-item'}">
+        <i class="fas fa-cube"></i>
+        <span>Sản phẩm</span>
+    </a>
+    <a th:href="@{/profile}" th:class="${activePage == 'profile' ? 'sidebar-item active' : 'sidebar-item'}">
+        <i class="fas fa-user"></i>
+        <span>Tài khoản</span>
+    </a>
+    <a th:href="@{/wishlist}" th:class="${activePage == 'bookmark' ? 'sidebar-item active' : 'sidebar-item'}">
+        <i class="fas fa-heart"></i>
+        <span>Yêu thích</span>
+    </a>
+    <a th:href="@{/orders}" th:class="${activePage == 'orders' ? 'sidebar-item active' : 'sidebar-item'}">
+        <i class="fas fa-receipt"></i>
+        <span>Theo dõi đơn hàng</span>
+    </a>
+    <hr class="my-3 border-gray-200">
+
+    <!-- Category Filter Section (Only for Products Page) -->
+    <div th:if="${activePage == 'products'}" class="sidebar-section">
+        <div class="sidebar-title">Danh mục</div>
+        <a th:href="@{/products}" th:class="${nctSelectedCategoryId == null ? 'sidebar-item active' : 'sidebar-item'}">
+            <span>Tất cả sản phẩm</span>
+        </a>
+        <a th:each="category : ${nctCategories}"
+           th:href="@{/products(category=${category.nctCategoryId})}"
+           th:class="${nctSelectedCategoryId != null and nctSelectedCategoryId == category.nctCategoryId ? 'sidebar-item active' : 'sidebar-item'}">
+            <span th:text="${category.nctCategoryName}">Category Name</span>
+        </a>
+        <hr class="my-3 border-gray-200">
+    </div>
+    <!-- Social Media Links -->
+    <a href="https://www.facebook.com/kobachan123" class="sidebar-item">
+        <i class="fab fa-facebook"></i>
+        <span>Facebook</span>
+    </a>
+    <a href="https://m.me/kobachan123" class="sidebar-item">
+        <i class="fab fa-facebook-messenger"></i>
+        <span>Messenger</span>
+    </a>
+    <hr class="my-3 border-gray-200">
+    <a th:href="@{/contact}" th:class="${activePage == 'contact' ? 'sidebar-item active' : 'sidebar-item'}">
+        <i class="fa-solid fa-phone"></i>
+        <span>Liên hệ</span>
+    </a>
+    <a th:href="@{/about}" th:class="${activePage == 'about' ? 'sidebar-item active' : 'sidebar-item'}">
+        <i class="fa-solid fa-circle-info"></i>
+        <span>Về chúng tôi</span>
+    </a>
+    <a th:href="@{/policy}" th:class="${activePage == 'policy' ? 'sidebar-item active' : 'sidebar-item'}">
+        <i class="fa-solid fa-wrench"></i>
+        <span>Chính sách</span>
+    </a>
+    <!-- Admin Dashboard Link (Visible only to Admins) -->
+    <div sec:authorize="hasRole('ADMIN')">
+        <hr class="my-3 border-gray-200">
+        <a th:href="@{/admin/dashboard}" class="sidebar-item">
+            <i class="fas fa-cogs"></i>
+            <span>Quản trị</span>
+        </a>
+    </div>
+</aside>
+
+</body>
+</html>

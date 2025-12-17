@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+
+<header th:fragment="header">
+    <!-- Logo -->
+    <a th:href="@{/}" class="logo">
+        <img th:src="@{/images/logo.png}" alt="UMACT logo" width="100" height="22" class="logo-img"/>
+    </a>
+
+    <!-- Search Bar -->
+    <div class="flex-1 mx-6 max-w-md">
+        <form th:action="@{/products}" method="get" class="relative flex items-center">
+            <input type="text" name="search" th:value="${nctSearchKeyword}" placeholder="Tìm kiếm sản phẩm..."
+                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-red-400 text-sm">
+            <button type="submit" class="absolute right-3 text-gray-400 hover:text-gray-600">
+                <i class="fas fa-search"></i>
+            </button>
+        </form>
+    </div>
+
+    <!-- Right Icons -->
+    <div class="flex items-center gap-4">
+        <a th:href="@{/wishlist}" title="Danh sách yêu thích" class="text-gray-600 hover:text-red-500 text-lg">
+            <i class="far fa-bookmark"></i>
+        </a>
+        <a th:href="@{/cart}" title="Giỏ hàng" class="text-gray-600 hover:text-red-500 text-lg">
+            <i class="fas fa-shopping-cart"></i>
+        </a>
+
+        <!-- User Icon: Anonymous -->
+        <div sec:authorize="isAnonymous()">
+            <a th:href="@{/auth/login}" title="Tài Khoản" class="text-gray-600 hover:text-red-500 text-lg">
+                <i class="fas fa-user"></i>
+            </a>
+        </div>
+
+        <!-- User Icon & Dropdown: Authenticated -->
+        <div sec:authorize="isAuthenticated()" class="relative group">
+            <a th:href="@{/profile}" title="Tài Khoản" class="text-gray-600 hover:text-red-500 text-lg cursor-pointer">
+                <i class="fas fa-user"></i>
+            </a>
+            <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 hidden group-hover:block">
+                <div class="px-4 py-2 text-sm text-gray-700">
+                    Xin chào, <strong sec:authentication="name">Username</strong>
+                </div>
+                <div class="border-t border-gray-100"></div>
+                <a th:href="@{/profile}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Quản lý tài khoản</a>
+                <form th:action="@{/auth/logout}" method="post" class="w-full">
+                    <button type="submit" class="w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        Đăng xuất
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</header>
+
+</body>
+</html>

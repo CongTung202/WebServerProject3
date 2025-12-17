@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/nct-admin-head :: adminHead(pageTitle='Quản lý Sản phẩm')}"></head>
+<body>
+<!-- Sidebar -->
+<div th:replace="~{fragments/nct-admin-sidebar :: adminSidebar(activePage='products')}"></div>
+
+<!-- Main Content -->
+<main class="main-content">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center nct-page-header">
+        <div>
+            <h1 class="h3 mb-2">Quản lý Sản phẩm</h1>
+            <p class="mb-0">Xem, tìm kiếm, và quản lý tất cả sản phẩm.</p>
+        </div>
+        <a href="/admin/products/create" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>Thêm sản phẩm mới
+        </a>
+    </div>
+
+    <!-- Alert Messages -->
+    <div th:if="${nctSuccess}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle me-2"></i>
+        <span th:text="${nctSuccess}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${nctError}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        <span th:text="${nctError}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <!-- Product Table -->
+    <div class="card nct-card">
+        <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
+            <h5 class="card-title mb-0 me-3"><i class="fas fa-list me-2"></i>Danh sách sản phẩm</h5>
+            <form th:action="@{/admin/products}" method="get" class="d-flex ms-auto" style="max-width: 300px;">
+                <input class="form-control me-2" type="search" name="keyword" placeholder="Tìm kiếm..." th:value="${nctKeyword}">
+                <button class="btn btn-outline-primary" type="submit">Tìm</button>
+            </form>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover nct-table">
+                    <thead>
+                    <tr>
+                        <th>Ảnh</th>
+                        <th>Tên sản phẩm</th>
+                        <th>Danh mục</th>
+                        <th>Giá</th>
+                        <th>Tồn kho</th>
+                        <th>Trạng thái</th>
+                        <th class="text-center">Hành động</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="product : ${nctProductPage.content}">
+                        <td>
+                            <img th:src="${product.nctImageUrl}" th:alt="${product.nctProductName}" class="nct-table-img"
+                                 onerror="this.src='/images/noimage.png'">
+                        </td>
+                        <td th:text="${product.nctProductName}"></td>
+                        <td th:text="${product.nctCategory?.nctCategoryName} ?: 'N/A'"></td>
+                        <td th:text="'₫' + ${#numbers.formatDecimal(product.nctPrice, 0, 'COMMA', 0, 'POINT')}"></td>
+                        <td th:text="${product.nctStockQuantity}"></td>
+                        <td>
+                            <span th:if="${product.nctStatus.name() == 'ACTIVE'}" class="badge bg-success">Đang bán</span>
+                            <span th:if="${product.nctStatus.name() == 'INACTIVE'}" class="badge bg-secondary">Ngừng bán</span>
+                        </td>
+                        <td class="text-center">
+                            <a th:href="@{/admin/products/view/{id}(id=${product.nctProductId})}" class="btn btn-sm btn-outline-info" title="Xem">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a th:href="@{/admin/products/edit/{id}(id=${product.nctProductId})}" class="btn btn-sm btn-outline-warning" title="Sửa">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a th:href="@{/admin/products/delete/{id}(id=${product.nctProductId})}" class="btn btn-sm btn-outline-danger" title="Xóa">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    <tr th:if="${nctProductPage.empty}">
+                        <td colspan="7" class="text-center text-muted py-4">
+                            <i class="fas fa-box-open fa-2x mb-2"></i>
+                            <p class="mb-0">Không tìm thấy sản phẩm nào.</p>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- Pagination Controls -->
+        <div class="card-footer" th:if="${nctProductPage.totalPages > 1}">
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center mb-0">
+                    <!-- Previous Button -->
+                    <li class="page-item" th:classappend="${nctProductPage.first} ? 'disabled'">
+                        <a class="page-link" th:href="@{/admin/products(page=${nctProductPage.number - 1}, keyword=${nctKeyword})}">Trước</a>
+                    </li>
+
+                    <!-- Page Numbers -->
+                    <li class="page-item" th:each="i : ${#numbers.sequence(0, nctProductPage.totalPages - 1)}"
+                        th:classappend="${i == nctProductPage.number} ? 'active'">
+                        <a class="page-link" th:href="@{/admin/products(page=${i}, keyword=${nctKeyword})}" th:text="${i + 1}"></a>
+                    </li>
+
+                    <!-- Next Button -->
+                    <li class="page-item" th:classappend="${nctProductPage.last} ? 'disabled'">
+                        <a class="page-link" th:href="@{/admin/products(page=${nctProductPage.number + 1}, keyword=${nctKeyword})}">Sau</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

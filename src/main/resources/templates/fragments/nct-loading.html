@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="loading-screen">
+
+    <link rel="stylesheet" th:href="@{/css/loader.css}">
+
+    <div id="preloader">
+        <img th:src="@{/images/mayano.webp}" alt="Loading Logo">
+        <h2>WELCOME</h2>
+    </div>
+
+    <script>
+        window.addEventListener("load", function () {
+            const loader = document.getElementById("preloader");
+
+            // Wait 2000ms then slide out to the left
+            setTimeout(function() {
+                loader.classList.add("loader-hidden");
+
+                // Remove element after transition completes
+                const onTransitionEnd = function(event) {
+                    // ensure we wait for the transform or opacity transition
+                    if (event.propertyName === 'transform' || event.propertyName === 'opacity') {
+                        loader.removeEventListener('transitionend', onTransitionEnd);
+                        loader.remove();
+                    }
+                };
+                loader.addEventListener("transitionend", onTransitionEnd);
+            }, 2000);
+        });
+    </script>
+</div>
+
+</body>
+</html>

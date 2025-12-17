@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/nct-admin-head :: adminHead(pageTitle='Thêm Sản phẩm Mới')}"></head>
+<body>
+<!-- Sidebar -->
+<div th:replace="~{fragments/nct-admin-sidebar :: adminSidebar(activePage='products')}"></div>
+
+<!-- Main Content -->
+<main class="main-content">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center nct-page-header">
+        <div>
+            <h1 class="h3 mb-2">Thêm Sản phẩm Mới</h1>
+            <p class="mb-0">Điền thông tin chi tiết cho sản phẩm mới.</p>
+        </div>
+        <a href="/admin/products" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Quay lại danh sách
+        </a>
+    </div>
+
+    <!-- Create Form -->
+    <form th:action="@{/admin/products/create}" th:object="${nctProduct}" method="post" enctype="multipart/form-data">
+        <div class="row">
+            <!-- Left Column: Product Details -->
+            <div class="col-lg-8">
+                <div class="card nct-card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0"><i class="fas fa-info-circle me-2"></i>Thông tin sản phẩm</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="nctProductName" class="form-label">Tên sản phẩm *</label>
+                            <input type="text" class="form-control" id="nctProductName" th:field="*{nctProductName}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="nctDescription" class="form-label">Mô tả</label>
+                            <textarea class="form-control" id="nctDescription" th:field="*{nctDescription}" rows="5"></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="nctOriginalPrice" class="form-label">Giá gốc</label>
+                                <input type="number" step="any" class="form-control" id="nctOriginalPrice" th:field="*{nctOriginalPrice}" min="0" placeholder="Để trống nếu không giảm giá">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="nctPrice" class="form-label">Giá bán (sau giảm giá) *</label>
+                                <input type="number" step="any" class="form-control" id="nctPrice" th:field="*{nctPrice}" min="0" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="nctStockQuantity" class="form-label">Số lượng tồn kho *</label>
+                            <input type="number" class="form-control" id="nctStockQuantity" th:field="*{nctStockQuantity}" min="0" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Category, Status, Image -->
+            <div class="col-lg-4">
+                <div class="card nct-card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0"><i class="fas fa-cogs me-2"></i>Tùy chọn</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="nctCategory" class="form-label">Danh mục *</label>
+                            <select class="form-select" id="nctCategory" name="nctCategoryId" required>
+                                <option value="">-- Chọn danh mục --</option>
+                                <option th:each="category : ${nctCategories}"
+                                        th:value="${category.nctCategoryId}"
+                                        th:text="${category.nctCategoryName}"></option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="nctStatus" class="form-label">Trạng thái</label>
+                            <select class="form-select" id="nctStatus" th:field="*{nctStatus}">
+                                <option value="ACTIVE">Đang bán</option>
+                                <option value="INACTIVE">Ngừng bán</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="nctImageFile" class="form-label">Ảnh sản phẩm</label>
+                            <input type="file" class="form-control" id="nctImageFile" name="nctImageFile" accept="image/*">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="mt-4 text-end">
+            <a href="/admin/products" class="btn btn-secondary me-2">
+                <i class="fas fa-times me-2"></i>Hủy
+            </a>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save me-2"></i>Lưu sản phẩm
+            </button>
+        </div>
+    </form>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

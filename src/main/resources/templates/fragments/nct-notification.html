@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<!-- Nhúng Google Fonts hỗ trợ Tiếng Việt (subset=vietnamese) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@600&family=Nunito:wght@700&family=Patrick+Hand&display=swap" rel="stylesheet">
+<div th:fragment="notification-screen(status, message, redirectUrl)" th:if="${status != null}">
+
+    <link rel="stylesheet" th:href="@{/css/loader.css}">
+
+    <style>
+        body{
+            font-family: 'Montserrat', sans-serif;
+        }
+        /* Bạn có thể giữ màu chữ hoặc đổi tùy ý */
+        .nct-notify-success h2 { color: #28a745 !important; }
+        .nct-notify-error h2 { color: #dc3545 !important; }
+        h2 {font-family: 'Nunito', sans-serif; !important}
+        /* Ẩn icon cũ nếu bạn muốn dùng ảnh hoàn toàn */
+        .nct-notify-icon { display: none; }
+    </style>
+
+    <div id="preloader" th:classappend="${status == 'success' ? 'nct-notify-success' : 'nct-notify-error'}">
+
+        <th:block th:switch="${status}">
+
+            <div th:case="'success'" class="flex flex-col items-center">
+                <img th:src="@{/images/riceshower.webp}" alt="Success Character" />
+
+                <h2 th:text="${message}">MUA HÀNG THÀNH CÔNG</h2>
+            </div>
+
+            <div th:case="'failure'" class="flex flex-col items-center">
+                <img th:src="@{/images/akebono.webp}" alt="Error Character" />
+
+                <h2 th:text="${message}">CÓ LỖI XẢY RA</h2>
+            </div>
+
+        </th:block>
+    </div>
+
+    <script th:inline="javascript">
+        window.addEventListener("load", function () {
+            const loader = document.getElementById("preloader");
+            const status = [[${status}]];
+            const redirectUrl = [[${redirectUrl}]];
+
+            // Thời gian hiển thị (2.5 giây)
+            setTimeout(function() {
+                loader.classList.add("loader-hidden");
+
+                const onTransitionEnd = function(event) {
+                     // Đảm bảo chỉ trigger khi transform kết thúc để tránh lỗi click sớm
+                    if (event.propertyName === 'transform' || event.propertyName === 'opacity') {
+                        loader.removeEventListener('transitionend', onTransitionEnd);
+                        loader.remove();
+
+                        // Logic điều hướng
+                        if (status === 'success' && redirectUrl) {
+                            window.location.href = redirectUrl;
+                        }
+                    }
+                };
+                loader.addEventListener("transitionend", onTransitionEnd);
+            }, 2500);
+        });
+    </script>
+</div>
+
+</body>
+</html>

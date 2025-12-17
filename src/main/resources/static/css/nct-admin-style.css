@@ -1,0 +1,200 @@
+/* src/main/resources/static/css/nct-admin-style.css */
+body {
+    background-color: #f8f9fa;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* --- Sidebar --- */
+.nct-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 280px; /* Fixed width for stability */
+    height: 100vh; /* Full viewport height */
+    background-color: #fff;
+    border-right: 1px solid #e0e0e0;
+    padding: 20px 0;
+    z-index: 1000;
+    overflow-y: auto; /* Allows scrolling for many items */
+    transition: width 0.3s ease;
+}
+
+.nct-sidebar .nav-link {
+    padding: 12px 20px;
+    color: #333;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    border-left: 3px solid transparent;
+}
+
+.nct-sidebar .nav-link:hover,
+.nct-sidebar .nav-link.active {
+    background-color: #f0f0f0;
+    color: #ff3333;
+    border-left-color: #ff3333;
+}
+
+.nct-sidebar .nav-link i {
+    font-size: 16px;
+    width: 20px;
+    text-align: center;
+}
+
+/* --- Main Content --- */
+.main-content {
+    margin-left: 280px; /* Offset by sidebar width */
+    padding: 2.5rem;
+    transition: margin-left 0.3s ease;
+}
+
+/* --- Cards --- */
+.nct-card {
+    background-color: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    transition: box-shadow 0.3s ease;
+}
+
+.nct-card:hover {
+    box-shadow: 0 8px 15px rgba(0,0,0,0.08);
+}
+
+/* --- Page Header --- */
+.nct-page-header {
+    padding-bottom: 1.5rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.nct-page-header h1 {
+    font-weight: 600;
+    color: #212529;
+}
+
+.nct-page-header .text-muted {
+    color: #6c757d !important;
+}
+
+/* --- Buttons --- */
+.btn-primary {
+    background-color: #ff3333;
+    border-color: #ff3333;
+}
+.btn-primary:hover {
+    background-color: #e60000;
+    border-color: #e60000;
+}
+
+/* --- Forms --- */
+.nct-form-control {
+    border-radius: 0.5rem;
+    border: 1px solid #ced4da;
+    padding: 0.75rem 1rem;
+}
+
+.nct-form-control:focus {
+    border-color: #ff3333;
+    box-shadow: 0 0 0 0.25rem rgba(255, 51, 51, 0.25);
+}
+
+/* --- Table Styles (for list view) --- */
+.nct-table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.nct-table thead {
+    background-color: #f8f9fa;
+}
+
+.nct-table th {
+    border-bottom: 2px solid #dee2e6;
+    padding: 1rem;
+    font-weight: 600;
+    color: #495057;
+}
+
+.nct-table td {
+    padding: 1rem;
+    vertical-align: middle;
+    border-top: 1px solid #e9ecef;
+}
+
+.nct-table-img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 0.5rem;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.nct-action-btn {
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+/* --- Specific Page Styles --- */
+
+/* Create/Edit Page */
+.nct-upload-area {
+    border: 2px dashed #ced4da;
+    border-radius: 0.75rem;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.nct-upload-area.highlight,
+.nct-upload-area:hover {
+    border-color: #ff3333;
+    background-color: #fff8f8;
+}
+.nct-image-preview {
+    max-width: 100%;
+    max-height: 250px;
+    border-radius: 0.5rem;
+    border: 1px solid #dee2e6;
+}
+
+/* View Page */
+.nct-view-image {
+    width: 100%;
+    max-width: 200px;
+    height: auto;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+.nct-info-section {
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 1.5rem;
+}
+.nct-info-section:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+.nct-product-thumb {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 0.5rem;
+    border: 2px solid #e9ecef;
+}
+
+/* Delete Page */
+.nct-delete-card {
+    border-left: 5px solid #dc3545;
+}
+.nct-warning-icon {
+    color: #dc3545;
+    font-size: 4rem;
+}

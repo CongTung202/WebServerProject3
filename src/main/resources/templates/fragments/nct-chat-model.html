@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Character Guide</title>
+    <link rel="stylesheet" th:href="@{/css/nct-user-style.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+<div th:fragment="nct-chat-model(pageContext, contextProduct)">
+    <div class="character-guide-container">
+        <div class="speech-bubble">
+            <th:block th:switch="${pageContext}">
+                <!-- Product Detail Page -->
+                <p class="bubble-text" th:case="'product-detail'" th:if="${nctProduct != null}">
+                    Sản phẩm <strong style="color:red" th:text="${nctProduct.nctProductName}"></strong> đang có giá <strong style="color:red" th:text="${#numbers.formatDecimal(nctProduct.nctPrice, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></strong>.
+                    Chat với chúng tôi để biết thêm chi tiết nhé!
+                </p>
+                <!-- Cart Page -->
+                <p class="bubble-text" th:case="'cart'">
+                    Sắp hoàn tất rồi! Cần hỗ trợ về phí vận chuyển hoặc mã giảm giá? Chat ngay với UMACT. nhé.
+                </p>
+                <!-- Checkout Page -->
+                <p class="bubble-text" th:case="'checkout'">c mắc nào về thanh toán, hãy cho chúng tôi biết nhé.
+                    Chỉ còn một bước nữa thôi! Nếu có bất kỳ thắ
+                </p>
+                <!-- Wishlist Page -->
+                <p class="bubble-text" th:case="'wishlist'">
+                    Đây là những sản phẩm bạn yêu thích. Cần tư vấn thêm về sản phẩm nào không?
+                </p>
+                <!-- Orders Page -->
+                <p class="bubble-text" th:case="'orders'">
+                    Bạn muốn kiểm tra tình trạng đơn hàng hoặc cần hỗ trợ về đơn hàng đã đặt?
+                </p>
+                <!-- Profile Page -->
+                <p class="bubble-text" th:case="'profile'">
+                    Tại đây bạn có thể quản lý thông tin cá nhân của mình. Cần giúp đỡ gì không?
+                </p>
+                <!-- Default/Home/Products Page -->
+                <p class="bubble-text" th:case="*">
+                    Chat với UMACT. để tìm kiếm sản phẩm ưng ý, cũng như tra cứu thông tin chi tiết về sản phẩm bạn nhé.
+                </p>
+            </th:block>
+            <a href="https://m.me/kobachan123" target="_blank" class="chat-link">
+                <span>Chat với UMACT.</span>
+                <i class="fas fa-chevron-right"></i>
+            </a>
+        </div>
+        <div class="character-image">
+            <img th:src="@{/images/tazuna.png}" alt="Guide Character">
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

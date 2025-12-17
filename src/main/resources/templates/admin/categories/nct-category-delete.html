@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/nct-admin-head :: adminHead(pageTitle=${nctPageTitle})}"></head>
+<body>
+<!-- Sidebar -->
+<div th:replace="~{fragments/nct-admin-sidebar :: adminSidebar(activePage='categories')}"></div>
+
+<!-- Main Content -->
+<main class="main-content">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center nct-page-header">
+        <div>
+            <h1 class="h2"><i class="fas fa-trash-alt me-2 text-danger"></i>Xóa Danh mục</h1>
+            <p class="text-muted mb-0">Xác nhận xóa danh mục.</p>
+        </div>
+        <a href="/admin/categories" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Quay lại
+        </a>
+    </div>
+
+    <!-- Delete Confirmation -->
+    <div class="card nct-card nct-delete-card">
+        <div class="card-body p-4 p-md-5">
+            <div class="text-center mb-4">
+                <i class="fas fa-exclamation-triangle nct-warning-icon"></i>
+                <h2 class="text-danger mt-3">Bạn có chắc chắn muốn xóa?</h2>
+                <p class="lead text-muted">Hành động này không thể hoàn tác. Danh mục <strong th:text="${nctCategory.nctCategoryName}"></strong> sẽ bị xóa vĩnh viễn.</p>
+            </div>
+
+            <div class="row justify-content-center mb-4">
+                <div class="col-md-8">
+                    <ul class="list-group">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Tên danh mục
+                            <span class="fw-bold" th:text="${nctCategory.nctCategoryName}"></span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Số sản phẩm liên quan
+                            <span class="badge bg-danger rounded-pill" th:text="${nctCategory.nctProducts?.size() ?: 0}"></span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div th:if="${nctHasProducts}" class="alert alert-danger text-center">
+                <h5 class="alert-heading"><i class="fas fa-exclamation-circle me-2"></i>Không thể xóa!</h5>
+                <p>Danh mục này đang chứa sản phẩm. Vui lòng di chuyển hoặc xóa các sản phẩm trước.</p>
+            </div>
+
+            <div class="text-center mt-4">
+                <form th:unless="${nctHasProducts}"
+                      th:action="@{/admin/categories/delete/{id}(id=${nctCategory.nctCategoryId})}"
+                      method="post" class="d-inline">
+                    <button type="submit" class="btn btn-danger btn-lg me-2">
+                        <i class="fas fa-trash me-2"></i>Xác nhận Xóa
+                    </button>
+                </form>
+                <a href="/admin/categories" class="btn btn-outline-secondary btn-lg">
+                    <i class="fas fa-times me-2"></i>Hủy
+                </a>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

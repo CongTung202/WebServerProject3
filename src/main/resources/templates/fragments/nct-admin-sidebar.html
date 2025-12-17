@@ -1,0 +1,40 @@
+<!-- src/main/resources/templates/fragments/nct-admin-sidebar.html -->
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" th:href="@{/css/nct-sidebar-style.css}">
+    <link rel="icon" type="image/x-icon" th:href="@{/favicon.ico}">
+</head>
+<body>
+
+<div th:fragment="adminSidebar(activePage)" class="col-md-3 col-lg-2 nct-sidebar p-0">
+    <div class="p-4 text-center">
+        <h4 class="text-dark mb-0">
+            <i class="fas fa-cog me-2"></i>NCT Admin
+        </h4>
+        <small class="text-muted">Quản lý hệ thống</small>
+    </div>
+    <nav class="nav flex-column mt-3">
+        <a class="nav-link" th:href="@{/admin/dashboard}" th:classappend="${activePage == 'dashboard' ? 'active' : ''}">
+            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+        </a>
+        <a class="nav-link" th:href="@{/admin/products}" th:classappend="${activePage == 'products' ? 'active' : ''}">
+            <i class="fas fa-box me-2"></i>Sản phẩm
+        </a>
+        <a class="nav-link" th:href="@{/admin/categories}" th:classappend="${activePage == 'categories' ? 'active' : ''}">
+            <i class="fas fa-tags me-2"></i>Danh mục
+        </a>
+        <a class="nav-link" th:href="@{/admin/users}" th:classappend="${activePage == 'users' ? 'active' : ''}">
+            <i class="fas fa-users me-2"></i>Người dùng
+        </a>
+        <a class="nav-link" th:href="@{/admin/orders}" th:classappend="${activePage == 'orders' ? 'active' : ''}">
+            <i class="fas fa-shopping-cart me-2"></i>Đơn hàng
+        </a>
+        <a class="nav-link" th:href="@{/}">
+            <i class="fas fa-home me-2"></i>Về trang chủ
+        </a>
+    </nav>
+</div>
+
+</body>
+</html>

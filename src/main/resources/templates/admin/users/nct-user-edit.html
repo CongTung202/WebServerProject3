@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/nct-admin-head :: adminHead(pageTitle='Chỉnh sửa Người dùng')}"></head>
+<body>
+<!-- Sidebar -->
+<div th:replace="~{fragments/nct-admin-sidebar :: adminSidebar(activePage='users')}"></div>
+
+<!-- Main Content -->
+<main class="main-content">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center nct-page-header">
+        <div>
+            <h1 class="h3 mb-2">Chỉnh sửa Người dùng</h1>
+            <p class="mb-0" th:text="${nctUser.nctFullName ?: nctUser.nctUsername}"></p>
+        </div>
+        <div>
+            <a th:href="@{/admin/users/view/{id}(id=${nctUser.nctUserId})}" class="btn btn-outline-secondary me-2">
+                <i class="fas fa-times me-2"></i>Hủy
+            </a>
+            <button type="submit" form="nctEditForm" class="btn btn-primary">
+                <i class="fas fa-save me-2"></i>Lưu thay đổi
+            </button>
+        </div>
+    </div>
+
+    <!-- Alert Messages -->
+    <div th:if="${nctError}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        <span th:text="${nctError}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <!-- Edit Form -->
+    <div class="card nct-card">
+        <div class="card-header">
+            <h5 class="card-title mb-0"><i class="fas fa-edit me-2"></i>Thông tin người dùng</h5>
+        </div>
+        <div class="card-body">
+            <form th:action="@{/admin/users/edit/{id}(id=${nctUser.nctUserId})}"
+                  th:object="${nctUser}" method="post" id="nctEditForm">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="nctFullName" class="form-label">Họ và tên</label>
+                        <input type="text" class="form-control" id="nctFullName" th:field="*{nctFullName}">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="nctUsername" class="form-label">Tên đăng nhập</label>
+                        <input type="text" class="form-control" id="nctUsername" th:field="*{nctUsername}" readonly>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="nctEmail" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="nctEmail" th:field="*{nctEmail}" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="nctPhone" class="form-label">Số điện thoại</label>
+                        <input type="tel" class="form-control" id="nctPhone" th:field="*{nctPhone}">
+                    </div>
+                    <div class="col-12 mb-3">
+                        <label for="nctAddress" class="form-label">Địa chỉ</label>
+                        <textarea class="form-control" id="nctAddress" th:field="*{nctAddress}" rows="3"></textarea>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="nctRole" class="form-label">Vai trò</label>
+                        <select class="form-select" id="nctRole" th:field="*{nctRole}" required>
+                            <option th:each="role : ${T(k23cnt3.nguyencongtung.project3.entity.NctUser.NctRole).values()}"
+                                    th:value="${role}"
+                                    th:text="${role.name() == 'ADMIN' ? 'Quản trị' : 'Người dùng'}"></option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

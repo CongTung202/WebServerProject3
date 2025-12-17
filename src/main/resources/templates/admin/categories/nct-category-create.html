@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/nct-admin-head :: adminHead(pageTitle=${nctPageTitle})}"></head>
+<body>
+<!-- Sidebar -->
+<div th:replace="~{fragments/nct-admin-sidebar :: adminSidebar(activePage='categories')}"></div>
+
+<!-- Main Content -->
+<main class="main-content">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center nct-page-header">
+        <div>
+            <h1 class="h2"><i class="fas fa-plus-circle me-2 text-danger"></i>Thêm Danh mục mới</h1>
+            <p class="text-muted mb-0">Tạo một danh mục sản phẩm mới cho cửa hàng.</p>
+        </div>
+        <a href="/admin/categories" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Quay lại danh sách
+        </a>
+    </div>
+
+    <!-- Alert Messages -->
+    <div th:if="${nctError}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        <span th:text="${nctError}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <!-- Create Form -->
+    <div class="card nct-card">
+        <div class="card-body p-4 p-md-5">
+            <form th:action="@{/admin/categories/create}" method="post" enctype="multipart/form-data">
+                <div class="row">
+                    <div class="col-md-7">
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Tên danh mục *</label>
+                            <input type="text" class="form-control nct-form-control"
+                                   name="nctCategoryName" required
+                                   placeholder="Ví dụ: Figure Anime">
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Mô tả danh mục</label>
+                            <textarea class="form-control nct-form-control"
+                                      name="nctDescription" rows="8"
+                                      placeholder="Mô tả ngắn về danh mục..."></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Hình ảnh danh mục</label>
+                            <div id="nctUploadArea" class="nct-upload-area">
+                                <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
+                                <p class="mb-1">Kéo và thả ảnh vào đây</p>
+                                <p class="text-muted small mb-2">hoặc</p>
+                                <label for="nctImageFileInput" class="btn btn-sm btn-outline-primary">Chọn file</label>
+                            </div>
+                            <input type="file" class="d-none" name="nctImageFile"
+                                   accept="image/*" id="nctImageFileInput">
+                            <div class="form-text mt-2">Ảnh không quá 10MB. Định dạng: JPG, PNG, GIF.</div>
+                        </div>
+                        <div class="text-center">
+                            <img id="nctImagePreview" class="nct-image-preview d-none mt-2">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-4 pt-3 border-top">
+                    <button type="submit" class="btn btn-primary text-white me-3">
+                        <i class="fas fa-save me-2"></i>Lưu danh mục
+                    </button>
+                    <a href="/admin/categories" class="btn btn-outline-secondary">
+                        <i class="fas fa-times me-2"></i>Hủy
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const uploadArea = document.getElementById('nctUploadArea');
+    const fileInput = document.getElementById('nctImageFileInput');
+    const preview = document.getElementById('nctImagePreview');
+
+    fileInput.addEventListener('change', function(e) { handleFiles(e.target.files); });
+    uploadArea.addEventListener('click', () => fileInput.click());
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, preventDefaults, false);
+    });
+    function preventDefaults(e) { e.preventDefault(); e.stopPropagation(); }
+    ['dragenter', 'dragover'].forEach(eventName => { uploadArea.addEventListener(eventName, () => uploadArea.classList.add('highlight'), false); });
+    ['dragleave', 'drop'].forEach(eventName => { uploadArea.addEventListener(eventName, () => uploadArea.classList.remove('highlight'), false); });
+    uploadArea.addEventListener('drop', handleDrop, false);
+
+    function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        fileInput.files = files;
+        handleFiles(files);
+    }
+
+    function handleFiles(files) {
+        if (files.length > 0) {
+            const file = files[0];
+            if (file.size > 10 * 1024 * 1024) { alert('File ảnh không được vượt quá 10MB'); fileInput.value = ''; return; }
+            if (!file.type.startsWith('image/')) { alert('Vui lòng chọn file ảnh'); fileInput.value = ''; return; }
+            const reader = new FileReader();
+            reader.onload = (e) => { preview.src = e.target.result; preview.classList.remove('d-none'); };
+            reader.readAsDataURL(file);
+        } else {
+            preview.classList.add('d-none');
+        }
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/nct-admin-head :: adminHead(pageTitle='Chi tiết Người dùng')}"></head>
+<body>
+<!-- Sidebar -->
+<div th:replace="~{fragments/nct-admin-sidebar :: adminSidebar(activePage='users')}"></div>
+
+<!-- Main Content -->
+<main class="main-content">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center nct-page-header">
+        <div>
+            <h1 class="h3 mb-2">Chi tiết Người dùng</h1>
+            <p class="mb-0" th:text="${nctUser.nctFullName ?: nctUser.nctUsername}"></p>
+        </div>
+        <div>
+            <a th:href="@{/admin/users/edit/{id}(id=${nctUser.nctUserId})}" class="btn btn-warning me-2">
+                <i class="fas fa-edit me-2"></i>Chỉnh sửa
+            </a>
+            <a th:href="@{/admin/users/delete/{id}(id=${nctUser.nctUserId})}" class="btn btn-danger me-2">
+                <i class="fas fa-trash me-2"></i>Xóa
+            </a>
+            <a href="/admin/users" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Quay lại danh sách
+            </a>
+        </div>
+    </div>
+
+    <!-- Alert Messages -->
+    <div th:if="${nctSuccess}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle me-2"></i>
+        <span th:text="${nctSuccess}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${nctError}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        <span th:text="${nctError}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="row">
+        <!-- Left Column: User Details -->
+        <div class="col-lg-8">
+            <div class="card nct-card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0"><i class="fas fa-user-circle me-2"></i>Thông tin cá nhân</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <strong>Họ và tên</strong>
+                            <span th:text="${nctUser.nctFullName} ?: 'Chưa cập nhật'"></span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <strong>Tên đăng nhập</strong>
+                            <span th:text="${nctUser.nctUsername}"></span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <strong>Email</strong>
+                            <span th:text="${nctUser.nctEmail}"></span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <strong>Số điện thoại</strong>
+                            <span th:text="${nctUser.nctPhone} ?: 'Chưa cập nhật'"></span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <strong>Địa chỉ</strong>
+                            <span th:text="${nctUser.nctAddress} ?: 'Chưa cập nhật'"></span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <strong>Mật khẩu</strong>
+                            <span th:text="${nctUser.nctPassword} ?: 'Chưa cập nhật'"></span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: System Info -->
+        <div class="col-lg-4">
+            <div class="card nct-card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0"><i class="fas fa-cogs me-2"></i>Thông tin hệ thống</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <strong>ID Người dùng</strong>
+                            <span th:text="${nctUser.nctUserId}"></span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <strong>Vai trò</strong>
+                            <div>
+                                <span th:if="${nctUser.nctRole.name() == 'ADMIN'}" class="badge bg-danger">Quản trị</span>
+                                <span th:if="${nctUser.nctRole.name() == 'USER'}" class="badge bg-success">Người dùng</span>
+                            </div>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <strong>Số đơn hàng</strong>
+                            <span class="badge bg-primary rounded-pill" th:text="${nctOrderCount}"></span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <strong>Ngày đăng ký</strong>
+                            <span th:text="${#temporals.format(nctUser.nctCreatedAt, 'dd/MM/yyyy HH:mm')}"></span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <strong>Cập nhật lần cuối</strong>
+                            <span th:text="${#temporals.format(nctUser.nctUpdatedAt, 'dd/MM/yyyy HH:mm')}"></span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

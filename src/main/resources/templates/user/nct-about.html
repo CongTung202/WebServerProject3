@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${nctPageTitle}">Về chúng tôi - UMACT Store</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/nct-user-style.css}">
+    <link rel="icon" type="image/x-icon" th:href="@{/favicon.ico}">
+</head>
+
+<body>
+<div th:replace="~{fragments/nct-header :: header}"></div>
+
+<div th:replace="~{fragments/nct-sidebar :: sidebar(activePage='about')}"></div>
+
+<!-- Main Content Area -->
+<div class="main-content">
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1>Về Chúng Tôi</h1>
+    </div>
+
+    <!-- About Page Container -->
+    <div class="about-container">
+        <!-- Story Section -->
+        <div class="about-section about-story">
+            <div class="about-story-image">
+                <img th:src="@{/images/aboutdemo.png}" alt="Umamusume Figure Display">
+            </div>
+            <div class="about-story-content">
+                <h3>Khởi Nguồn Đam Mê</h3>
+                <p>
+                    Xin chào các <strong>Trainer</strong>! UmaCT không chỉ là một cửa hàng, mà là điểm dừng chân của những tâm hồn yêu thích Umamusume và văn hóa Figure.
+                </p>
+                <p>
+                    Chúng tôi hiểu cảm giác hồi hộp khi "Gacha" ra nhân vật mình thích, và niềm vui sướng khi cầm trên tay hộp mô hình sắc nét. Tại UmaCT, sứ mệnh của chúng tôi là mang những chiến mã xinh đẹp từ Nhật Bản về thẳng bộ sưu tập của bạn với sự an tâm tuyệt đối.
+                </p>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div class="about-section about-features">
+            <div class="about-features-grid">
+                <div class="about-feature-card">
+                    <div class="icon">🎌</div>
+                    <h4>Chuẩn Nhật 100%</h4>
+                    <p>Nói không với hàng Fake. Chỉ bán hàng chính hãng từ các thương hiệu lớn như Good Smile Company, Alter.</p>
+                </div>
+                <div class="about-feature-card">
+                    <div class="icon">🐎</div>
+                    <h4>Tốc Độ Thần Sầu</h4>
+                    <p>Quy trình xử lý đơn hàng tối ưu. Ship hỏa tốc nội thành, đóng gói chuẩn Otaku chống móp méo.</p>
+                </div>
+                <div class="about-feature-card">
+                    <div class="icon">💖</div>
+                    <h4>Hậu Mãi Tận Tâm</h4>
+                    <p>Hỗ trợ tìm kiếm (Order) mẫu hiếm. Tư vấn bảo quản mô hình bền đẹp theo thời gian.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Call to Action Section -->
+        <div class="about-section about-cta">
+            <h3>Sẵn sàng đón chiến mã về dinh?</h3>
+            <a href="/" class="btn btn-buy-now">
+                <i class="fas fa-store"></i>
+                Xem Cửa Hàng Ngay
+            </a>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/nct-chat-model :: nct-chat-model(pageContext='*', contextProduct=null)}"></div>
+<div th:replace="~{fragments/nct-footer :: footer}"></div>
+
+</body>
+</html>
