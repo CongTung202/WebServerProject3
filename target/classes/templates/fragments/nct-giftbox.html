@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Gacha Kitasan Black</title>
+    <link rel="stylesheet" th:href="@{/css/nct-giftbox.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+<div class="main-container">
+    <div class="gift-box" onclick="openGacha()">
+        <i class="fa-solid fa-gift fa-5x"></i> </div>
+    <p class="gift-text">Nhấn để nhận quà!</p>
+</div>
+
+<audio id="ssrSound" th:src="@{/audio/harikite_ikkou.mp3}"></audio>
+
+<div id="ssrModal" class="gacha-overlay" style="display: none;"> <div class="gacha-content">
+    <span class="close-btn" onclick="closeGacha()">&times;</span>
+
+    <img th:src="@{/images/kitasan_ssr.png}" alt="SSR Kitasan Black" class="ssr-card">
+
+    <h2 class="ssr-text">Bạn Nhận Được Ưu Đãi Giảm 100% Khi Không Mua Gì!</h2>
+</div>
+</div>
+
+<script>
+    function openGacha() {
+        // Lấy modal và hiển thị
+        const modal = document.getElementById("ssrModal");
+        modal.style.display = "flex"; // Dùng flex để modal tự căn giữa nội dung bên trong
+
+        // Xử lý âm thanh
+        const audio = document.getElementById("ssrSound");
+        audio.currentTime = 0; // Tua lại từ đầu (để click nhiều lần vẫn kêu)
+        audio.volume = 0.5;    // Chỉnh âm lượng (0.0 đến 1.0)
+        audio.play().catch(error => {
+            console.log("Trình duyệt chặn tự phát âm thanh: ", error);
+        });
+    }
+
+    function closeGacha() {
+        document.getElementById("ssrModal").style.display = "none";
+
+        // Tắt nhạc nếu muốn khi đóng modal
+        const audio = document.getElementById("ssrSound");
+        audio.pause();
+        audio.currentTime = 0;
+    }
+
+    // Đóng khi click ra ngoài
+    window.onclick = function(event) {
+        const modal = document.getElementById("ssrModal");
+        if (event.target == modal) {
+            closeGacha();
+        }
+    }
+</script>
+
+</body>
+</html>

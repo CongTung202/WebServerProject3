@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${nctPageTitle}">Danh sách yêu thích</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/nct-user-style.css}">
+    <link rel="icon" type="image/x-icon" th:href="@{/favicon.ico}">
+</head>
+<body>
+
+<!-- Header -->
+<div th:replace="~{fragments/nct-header :: header}"></div>
+
+<!-- Sidebar -->
+<div th:replace="~{fragments/nct-sidebar :: sidebar(activePage='bookmark')}"></div>
+
+<!-- Main Content -->
+<main class="main-content">
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1>Danh sách yêu thích</h1>
+    </div>
+
+    <!-- Empty Wishlist -->
+    <div id="empty-wishlist-message" class="empty-state" th:style="${wishlistItems == null or #lists.isEmpty(wishlistItems)} ? 'display: block;' : 'display: none;'">
+        <i class="far fa-heart"></i>
+        <p>Danh sách yêu thích của bạn đang trống.</p>
+        <a th:href="@{/products}">Khám phá sản phẩm</a>
+    </div>
+
+    <!-- Wishlist with Items -->
+    <div id="product-grid-container" th:if="${wishlistItems != null and not #lists.isEmpty(wishlistItems)}" class="product-grid">
+        <!-- Wishlist Item Loop -->
+        <div th:each="item : ${wishlistItems}" class="product-card" th:id="'wishlist-item-' + ${item.nctProduct.nctProductId}">
+            <!-- Product Image and Info Link -->
+            <a th:href="@{/products/{id}(id=${item.nctProduct.nctProductId})}" style="text-decoration: none;">
+                <div class="product-image">
+                    <img th:src="${item.nctProduct.nctImageUrl}" th:alt="${item.nctProduct.nctProductName}">
+                </div>
+                <div class="product-info">
+                    <h3 class="product-name" th:text="${item.nctProduct.nctProductName}">Product Name</h3>
+                    <p class="product-price" th:text="|₫ ${#numbers.formatDecimal(item.nctProduct.nctPrice, 0, 'COMMA', 0, 'POINT')}|"></p>
+                </div>
+            </a>
+
+            <!-- Product Actions -->
+            <div class="product-actions">
+                <!-- Add to Cart Button -->
+                <button type="button" class="btn-wishlist-action btn-add-to-cart"
+                        th:onclick="'addToCartFromWishlist(this, ' + ${item.nctProduct.nctProductId} + ')'"
+                        title="Thêm vào giỏ hàng">
+                    <i class="fas fa-cart-plus"></i> Thêm vào giỏ
+                </button>
+
+                <!-- Remove from Wishlist Button -->
+                <button type="button" class="btn-wishlist-action btn-remove-from-wishlist"
+                        th:onclick="'removeFromWishlist(this, ' + ${item.nctProduct.nctProductId} + ')'"
+                        title="Xóa khỏi yêu thích">
+                    <i class="fas fa-trash-alt"></i> Xóa
+                </button>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{fragments/nct-chat-model :: nct-chat-model(pageContext='wishlist', contextProduct=null)}"></div>
+<div th:replace="~{fragments/nct-footer :: footer}"></div>
+
+<!-- Toast Notification Container -->
+<div id="toast-container"></div>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    // Function to get CSRF token headers
+    function getCsrfHeaders() {
+        const token = /*[[${_csrf.token}]]*/ null;
+        const header = /*[[${_csrf.headerName}]]*/ null;
+        const headers = new Headers();
+        headers.append('Content-Type', 'application/x-www-form-urlencoded');
+        if (token && header) {
+            headers.append(header, token);
+        }
+        return headers;
+    }
+
+    // Function to show toast notifications
+    function showToast(message, type = 'info') {
+        const container = document.getElementById('toast-container');
+        if (!container) return;
+
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.textContent = message;
+        container.appendChild(toast);
+
+        setTimeout(() => {
+            toast.classList.add('show');
+        }, 100);
+
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => {
+                if (container.contains(toast)) {
+                    container.removeChild(toast);
+                }
+            }, 300);
+        }, 3000);
+    }
+
+    // Function to add product to cart from wishlist
+    function addToCartFromWishlist(button, productId) {
+        const originalHtml = button.innerHTML;
+        button.innerHTML = 'Đang thêm...';
+        button.disabled = true;
+
+        fetch('/cart/add', {
+            method: 'POST',
+            headers: getCsrfHeaders(),
+            body: `productId=${productId}&quantity=1`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showToast(data.message, 'success');
+            } else {
+                showToast(data.message, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('Không thể thêm vào giỏ hàng.', 'error');
+        })
+        .finally(() => {
+            button.innerHTML = originalHtml;
+            button.disabled = false;
+        });
+    }
+
+    // Function to remove product from wishlist
+    function removeFromWishlist(button, productId) {
+        fetch(`/wishlist/remove/${productId}`, {
+            method: 'POST',
+            headers: getCsrfHeaders()
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showToast(data.message, 'success');
+                const card = document.getElementById(`wishlist-item-${productId}`);
+                if (card) {
+                    card.style.transition = 'opacity 0.5s ease';
+                    card.style.opacity = '0';
+                    setTimeout(() => {
+                        card.remove();
+                        const grid = document.getElementById('product-grid-container');
+                        if (grid && grid.children.length === 0) {
+                            grid.style.display = 'none';
+                            document.getElementById('empty-wishlist-message').style.display = 'block';
+                        }
+                    }, 500);
+                }
+            } else {
+                showToast(data.message, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('Không thể xóa khỏi danh sách yêu thích.', 'error');
+        });
+    }
+    /*]]>*/
+</script>
+
+</body>
+</html>

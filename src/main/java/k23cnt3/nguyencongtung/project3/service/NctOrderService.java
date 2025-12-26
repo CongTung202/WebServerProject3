@@ -235,12 +235,15 @@ public class NctOrderService implements NctOrderServiceInterface {
         if (nctOrderOpt.isPresent()) {
             NctOrder nctOrder = nctOrderOpt.get();
 
-            if (nctOrder.getNctStatus() == NctOrder.NctOrderStatus.DELIVERED ||
-                    nctOrder.getNctStatus() == NctOrder.NctOrderStatus.SHIPPING) {
-                throw new RuntimeException("Không thể xóa đơn hàng đã giao hoặc đang giao");
+            // Ràng buộc mới: Chỉ cho phép xóa nếu trạng thái là PENDING hoặc CANCELLED
+            if (nctOrder.getNctStatus() != NctOrder.NctOrderStatus.PENDING &&
+                    nctOrder.getNctStatus() != NctOrder.NctOrderStatus.CANCELLED) {
+                throw new RuntimeException("Chỉ có thể xóa đơn hàng ở trạng thái Chờ xử lý hoặc Đã hủy");
             }
 
-            if (nctOrder.getNctStatus() != NctOrder.NctOrderStatus.CANCELLED) {
+            // Nếu đơn hàng đang ở trạng thái PENDING, cần hoàn lại số lượng sản phẩm vào kho trước khi xóa
+            // (Nếu trạng thái là CANCELLED thì số lượng thường đã được hoàn lại khi thực hiện lệnh hủy)
+            if (nctOrder.getNctStatus() == NctOrder.NctOrderStatus.PENDING) {
                 for (NctOrderItem nctOrderItem : nctOrder.getNctOrderItems()) {
                     NctProduct nctProduct = nctOrderItem.getNctProduct();
                     nctProduct.setNctStockQuantity(nctProduct.getNctStockQuantity() + nctOrderItem.getNctQuantity());

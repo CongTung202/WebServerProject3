@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="loading-screen">
+
+    <link rel="stylesheet" th:href="@{/css/loader.css}">
+
+    <div id="preloader">
+        <img th:src="@{/images/mayanoload.webp}" alt="Loading Logo">
+        <h2>WELCOME</h2>
+    </div>
+
+    <script>
+        window.addEventListener("load", function () {
+            const loader = document.getElementById("preloader");
+
+            // Đặt thời gian chờ 2000ms (3 giây)
+            setTimeout(function() {
+                loader.classList.add("loader-hidden");
+
+                // Xóa hẳn element khỏi DOM sau khi hiệu ứng mờ kết thúc (để không che nút bấm)
+                loader.addEventListener("transitionend", function() {
+                    loader.remove(); // Hoặc dùng loader.style.display = 'none';
+                });
+            }, 2000);
+        });
+    </script>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liên hệ - UMACT Store</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/nct-user-style.css}">
+    <link rel="icon" type="image/x-icon" th:href="@{/favicon.ico}">
+</head>
+
+<body>
+<div th:replace="~{fragments/nct-header :: header}"></div>
+
+<div th:replace="~{fragments/nct-sidebar :: sidebar(activePage='contact')}"></div>
+
+<!-- Main Content Area -->
+<div class="main-content">
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1>Liên Hệ</h1>
+    </div>
+
+    <!-- Contact Page Container -->
+    <div class="contact-container">
+        <!-- Contact Info Section -->
+        <div class="contact-section">
+            <div class="contact-info-block">
+                <h3>Thông Tin Liên Hệ</h3>
+                <p>
+                    Nếu bạn có bất kỳ câu hỏi nào, đừng ngần ngại liên hệ với chúng tôi. Đội ngũ UmaCT luôn sẵn sàng hỗ trợ!
+                </p>
+                <div class="contact-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <div>
+                        <strong>Địa chỉ:</strong>
+                        <p>157 Phố Xốm, Phú Lãm ,Hà Đông, Hà Nội</p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-phone-alt"></i>
+                    <div>
+                        <strong>Điện thoại:</strong>
+                        <p>0334402527</p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-envelope"></i>
+                    <div>
+                        <strong>Email:</strong>
+                        <p>nct30000@gmail.com</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Map Section -->
+        <div class="contact-section contact-map">
+            <h3>Vị Trí Của Chúng Tôi</h3>
+            <div class="map-responsive">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d658.7094540334023!2d105.75700575684002!3d20.94354290295981!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31345295a13f625d%3A0xa9d86743a7677571!2zMTU3IFBo4buRIFjhu5FtIC0gVEhQVCBUcuG6p24gSMawbmcgxJDhuqFv!5e0!3m2!1svi!2s!4v1764863239408!5m2!1svi!2s" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>            </div>
+        </div>
+
+        <!-- Additional Info Section -->
+        <div class="contact-section contact-additional-info">
+            <div class="info-card">
+                <i class="fas fa-clock"></i>
+                <h4>Giờ Làm Việc</h4>
+                <p>Thứ 2 - Thứ 7: 8:00 - 21:00</p>
+                <p>Chủ Nhật: 10:00 - 18:00</p>
+            </div>
+            <div class="info-card">
+                <i class="fas fa-share-alt"></i>
+                <h4>Theo Dõi Chúng Tôi</h4>
+                <div class="social-links">
+                    <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/nct-chat-model :: nct-chat-model(pageContext='*', contextProduct=null)}"></div>
+<div th:replace="~{fragments/nct-footer :: footer}"></div>
+
+</body>
+</html>

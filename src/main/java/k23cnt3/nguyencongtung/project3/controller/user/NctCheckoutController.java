@@ -4,11 +4,7 @@ import k23cnt3.nguyencongtung.project3.entity.NctCartItem;
 import k23cnt3.nguyencongtung.project3.entity.NctOrder;
 import k23cnt3.nguyencongtung.project3.entity.NctProduct;
 import k23cnt3.nguyencongtung.project3.entity.NctUser;
-import k23cnt3.nguyencongtung.project3.service.NctCartService;
-import k23cnt3.nguyencongtung.project3.service.NctOrderService;
-import k23cnt3.nguyencongtung.project3.service.NctProductService;
-import k23cnt3.nguyencongtung.project3.service.NctUserService;
-import k23cnt3.nguyencongtung.project3.service.ZaloPayService;
+import k23cnt3.nguyencongtung.project3.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -29,19 +26,19 @@ public class NctCheckoutController {
     private final NctUserService nctUserService;
     private final NctOrderService nctOrderService;
     private final NctProductService nctProductService;
-    private final ZaloPayService zaloPayService;
+    private final NctPayOSService nctPayOSService;
 
     @Autowired
     public NctCheckoutController(NctCartService nctCartService,
                                  NctUserService nctUserService,
                                  NctOrderService nctOrderService,
                                  NctProductService nctProductService,
-                                 ZaloPayService zaloPayService) {
+                                 NctPayOSService nctPayOSService) {
         this.nctCartService = nctCartService;
         this.nctUserService = nctUserService;
         this.nctOrderService = nctOrderService;
         this.nctProductService = nctProductService;
-        this.zaloPayService = zaloPayService;
+        this.nctPayOSService = nctPayOSService;
     }
 
     private NctUser getCurrentUser(UserDetails userDetails) {
@@ -130,14 +127,12 @@ public class NctCheckoutController {
                                      Model model) {
 
         NctUser currentUser = getCurrentUser(userDetails);
-        if (currentUser == null) {
-            return "redirect:/login";
-        }
+        if (currentUser == null) return "redirect:/login";
 
         String viewName = "user/nct-checkout";
 
         try {
-            // 1. Tính toán tổng tiền
+            // 1. Tính toán tổng tiền (như cũ)
             double amount = 0;
             if (isBuyNow) {
                 if (productId == null || quantity == null) throw new RuntimeException("Thiếu thông tin sản phẩm mua ngay.");
@@ -147,81 +142,71 @@ public class NctCheckoutController {
                 amount = nctCartService.nctCalculateCartTotal(currentUser);
             }
 
-            // 2. KIỂM TRA PHƯƠNG THỨC THANH TOÁN
-            if (nctOrderDetails.getNctPaymentMethod() == NctOrder.NctPaymentMethod.BANKING) {
-
-                // B1: Lưu đơn hàng trước để có ID
-                NctOrder savedOrder; // Khai báo biến hứng đơn hàng đã lưu
-                if (isBuyNow) {
-                    savedOrder = nctOrderService.nctCreateOrderFromSingleProduct(currentUser, productId, quantity,
-                            nctOrderDetails.getNctShippingAddress(), nctOrderDetails.getNctPhone(), NctOrder.NctPaymentMethod.BANKING);
-                } else {
-                    savedOrder = nctOrderService.nctCreateOrderFromCart(currentUser, nctOrderDetails);
-                }
-
-                // B2: Tạo đường dẫn quay về (Trang chi tiết đơn hàng)
-                // Lưu ý: Thay "localhost:8080" bằng domain thật khi deploy
-                String returnUrl = "http://localhost:8080/payment/callback?nctOrderId=" + savedOrder.getNctOrderId();
-
-                // B3: Gọi ZaloPay Service kèm returnUrl
-                Map<String, Object> zaloPayResult = zaloPayService.createOrder((int) amount, returnUrl);
-
-                if (zaloPayResult.containsKey("orderUrl")) {
-                    return "redirect:" + zaloPayResult.get("orderUrl").toString();
-                } else {
-                    throw new RuntimeException("Lỗi tạo link thanh toán ZaloPay: " + zaloPayResult.get("error"));
-                }
-            }
-
-            // 3. XỬ LÝ THANH TOÁN THƯỜNG (COD)
+            // 2. LƯU ĐƠN HÀNG VÀO DATABASE TRƯỚC (Trạng thái mặc định là PENDING/CHỜ DUYỆT)
+            NctOrder savedOrder;
             if (isBuyNow) {
-                nctOrderService.nctCreateOrderFromSingleProduct(currentUser, productId, quantity,
+                savedOrder = nctOrderService.nctCreateOrderFromSingleProduct(currentUser, productId, quantity,
                         nctOrderDetails.getNctShippingAddress(), nctOrderDetails.getNctPhone(), nctOrderDetails.getNctPaymentMethod());
             } else {
-                nctOrderService.nctCreateOrderFromCart(currentUser, nctOrderDetails);
+                savedOrder = nctOrderService.nctCreateOrderFromCart(currentUser, nctOrderDetails);
             }
 
+            // Cập nhật lại tổng tiền vào object order để chắc chắn Service PayOS lấy đúng giá
+            //savedOrder.setNctTotalAmount(amount);
+            // Nếu entity của bạn dùng BigDecimal cho amount thì set:
+            savedOrder.setNctTotalAmount(BigDecimal.valueOf(amount));
+
+            // --- BẮT ĐẦU THAY ĐỔI TẠI ĐÂY ---
+
+            // 3. KIỂM TRA PHƯƠNG THỨC THANH TOÁN
+            // Nếu user chọn BANKING -> Gọi PayOS (Thay thế ZaloPay)
+            if (nctOrderDetails.getNctPaymentMethod() == NctOrder.NctPaymentMethod.BANKING) {
+
+                // Gọi Service PayOS lấy link thanh toán
+                String checkoutUrl = nctPayOSService.createPaymentLink(savedOrder);
+
+                // Chuyển hướng người dùng sang trang của PayOS
+                return "redirect:" + checkoutUrl;
+            }
+
+            // 4. NẾU LÀ COD (Thanh toán khi nhận hàng)
+            // Đơn hàng đã được lưu ở bước 2 rồi, chỉ cần báo thành công
             model.addAttribute("notificationStatus", "success");
             model.addAttribute("notificationMessage", "Đặt hàng thành công!");
-            model.addAttribute("redirectUrl", "/orders"); // Chuyển hướng về danh sách đơn hàng
+            model.addAttribute("redirectUrl", "/orders");
 
         } catch (Exception e) {
             e.printStackTrace();
             model.addAttribute("notificationStatus", "failure");
             model.addAttribute("notificationMessage", "LỖI: " + e.getMessage());
             model.addAttribute("redirectUrl", null);
-        }
 
-        // --- NẠP LẠI DỮ LIỆU ĐỂ HIỂN THỊ GIAO DIỆN KHI CÓ LỖI HOẶC LOAD LẠI ---
-        if (isBuyNow && productId != null) {
-            try {
-                NctProduct product = nctProductService.nctGetProductById(productId).orElse(null);
-                if (product != null) {
-                    NctCartItem tempCartItem = new NctCartItem();
-                    tempCartItem.setNctProduct(product);
-                    tempCartItem.setNctQuantity(quantity != null ? quantity : 1);
-                    double total = product.getNctPrice().doubleValue() * tempCartItem.getNctQuantity();
-
-                    model.addAttribute("nctCartItems", Collections.singletonList(tempCartItem));
-                    model.addAttribute("nctTotal", total);
-                    model.addAttribute("buyNowProductId", productId);
-                    model.addAttribute("buyNowQuantity", quantity);
-                }
-            } catch (Exception ex) {
-                model.addAttribute("nctCartItems", new ArrayList<>());
-                model.addAttribute("nctTotal", 0);
+            // Logic load lại dữ liệu cart khi lỗi (như cũ của bạn)
+            if (isBuyNow && productId != null) {
+                try {
+                    NctProduct product = nctProductService.nctGetProductById(productId).orElse(null);
+                    if (product != null) {
+                        NctCartItem tempCartItem = new NctCartItem();
+                        tempCartItem.setNctProduct(product);
+                        tempCartItem.setNctQuantity(quantity != null ? quantity : 1);
+                        double total = product.getNctPrice().doubleValue() * tempCartItem.getNctQuantity();
+                        model.addAttribute("nctCartItems", Collections.singletonList(tempCartItem));
+                        model.addAttribute("nctTotal", total);
+                        model.addAttribute("buyNowProductId", productId);
+                        model.addAttribute("buyNowQuantity", quantity);
+                    }
+                } catch (Exception ex) {}
+            } else {
+                List<NctCartItem> cartItems = nctCartService.nctGetCartItems(currentUser);
+                double total = nctCartService.nctCalculateCartTotal(currentUser);
+                model.addAttribute("nctCartItems", cartItems);
+                model.addAttribute("nctTotal", total);
             }
-        } else {
-            List<NctCartItem> cartItems = nctCartService.nctGetCartItems(currentUser);
-            double total = nctCartService.nctCalculateCartTotal(currentUser);
-            model.addAttribute("nctCartItems", cartItems);
-            model.addAttribute("nctTotal", total);
+            model.addAttribute("nctPageTitle", isBuyNow ? "Thanh toán Mua ngay" : "Thanh toán");
+            model.addAttribute("isBuyNow", isBuyNow);
+            model.addAttribute("nctOrder", nctOrderDetails);
+            return viewName;
         }
-
-        model.addAttribute("nctPageTitle", isBuyNow ? "Thanh toán Mua ngay" : "Thanh toán");
-        model.addAttribute("isBuyNow", isBuyNow);
-        model.addAttribute("nctOrder", nctOrderDetails);
-
         return viewName;
     }
 }

@@ -91,4 +91,9 @@ public class NctCartService {
                 .mapToDouble(item -> item.getNctProduct().getNctPrice().doubleValue() * item.getNctQuantity())
                 .sum();
     }
+    // Trong NctCartService.java
+    public void nctAddProductToCart(NctUser user, Long productId, Integer quantity) {
+        // Gọi lại hàm nctAddToCart đã được viết đầy đủ logic ở phía trên
+        nctAddToCart(user, productId, quantity);
+    }
 }

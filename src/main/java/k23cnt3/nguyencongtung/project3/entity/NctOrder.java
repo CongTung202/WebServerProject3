@@ -192,7 +192,7 @@ public class NctOrder {
     public String getNctPaymentMethodDisplayName() {
         switch (this.nctPaymentMethod) {
             case COD: return "Thanh toán khi nhận hàng";
-            case BANKING: return "Chuyển khoản ngân hàng";
+            case BANKING: return "Thanh Toán PayOs";
             default: return "Không xác định";
         }
     }

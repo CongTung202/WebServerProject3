@@ -1,9 +1,11 @@
 package k23cnt3.nguyencongtung.project3.config;
 
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @ControllerAdvice
 public class NctGlobalExceptionHandler {
@@ -21,5 +23,13 @@ public class NctGlobalExceptionHandler {
         mav.addObject("url", request.getRequestURL());
         mav.setViewName("error");
         return mav;
+    }
+    @ExceptionHandler(NoResourceFoundException.class)
+    public String handleNoResourceFoundException(NoResourceFoundException e, Model model) {
+        // Có thể add thêm message nếu muốn hiển thị động
+        model.addAttribute("errorMessage", "Đường dẫn không tồn tại: " + e.getResourcePath());
+
+        // Trả về file templates/error/404.html
+        return "error/404";
     }
 }

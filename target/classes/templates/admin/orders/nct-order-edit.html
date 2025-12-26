@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/nct-admin-head :: adminHead(pageTitle=${nctPageTitle})}"></head>
+<body>
+<!-- Sidebar -->
+<div th:replace="~{fragments/nct-admin-sidebar :: adminSidebar(activePage='orders')}"></div>
+
+<!-- Main Content -->
+<main class="main-content">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center nct-page-header">
+        <div>
+            <h1 class="h3 mb-2">
+                <i class="fas fa-edit me-2"></i>Chỉnh sửa Đơn hàng
+            </h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/admin/orders">Đơn hàng</a></li>
+                    <li class="breadcrumb-item"><a th:href="@{/admin/orders/view/{id}(id=${nctOrder.nctOrderId})}"
+                                                   th:text="'#' + ${nctOrder.nctOrderId}"></a></li>
+                    <li class="breadcrumb-item active">Chỉnh sửa</li>
+                </ol>
+            </nav>
+        </div>
+        <div>
+            <a th:href="@{/admin/orders/view/{id}(id=${nctOrder.nctOrderId})}" class="btn btn-outline-secondary me-2">
+                <i class="fas fa-times me-1"></i> Hủy
+            </a>
+            <button type="submit" form="nctEditForm" class="btn btn-primary">
+                <i class="fas fa-save me-1"></i> Lưu thay đổi
+            </button>
+        </div>
+    </div>
+
+    <!-- Alert Messages -->
+    <div th:if="${nctSuccess}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle me-2"></i>
+        <span th:text="${nctSuccess}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${nctError}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        <span th:text="${nctError}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="card nct-card">
+        <div class="card-body p-4 p-md-5">
+            <form th:action="@{/admin/orders/edit/{id}(id=${nctOrder.nctOrderId})}"
+                  method="post" id="nctEditForm" th:object="${nctOrder}">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="nctShippingAddress" class="form-label">Địa chỉ giao hàng <span class="text-danger">*</span></label>
+                        <textarea class="form-control nct-form-control" id="nctShippingAddress"
+                                  rows="3" placeholder="Nhập địa chỉ giao hàng" required
+                                  th:field="*{nctShippingAddress}"></textarea>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="nctPhone" class="form-label">Số điện thoại <span class="text-danger">*</span></label>
+                        <input type="tel" class="form-control nct-form-control" id="nctPhone"
+                               placeholder="Nhập số điện thoại" required
+                               th:field="*{nctPhone}">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="nctStatus" class="form-label">Trạng thái đơn hàng <span class="text-danger">*</span></label>
+                        <select class="form-select nct-form-control" id="nctStatus" th:field="*{nctStatus}" required>
+                            <option th:each="status : ${T(k23cnt3.nguyencongtung.project3.entity.NctOrder.NctOrderStatus).values()}"
+                                    th:value="${status}"
+                                    th:text="${status.getDisplayName()}"></option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-12"><hr class="my-2"></div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Khách hàng</label>
+                        <input type="text" class="form-control nct-form-control"
+                               th:value="${nctOrder.nctUser.nctFullName} + ' (' + ${nctOrder.nctUser.nctEmail} + ')'"
+                               readonly>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Phương thức thanh toán</label>
+                        <input type="text" class="form-control nct-form-control"
+                               th:value="${nctOrder.nctPaymentMethodDisplayName}"
+                               readonly>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

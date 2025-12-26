@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>404 - Lạc đường rồi!</title>
+    <link rel="stylesheet" th:href="@{/css/error-style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div id="error-container">
+    <img th:src="@{/images/mayano.webp}" alt="Lost Mayano" class="error-image">
+
+    <div class="error-content">
+        <h1>404</h1>
+        <h2>Oops! Lạc đường rồi Trainer ơi!</h2>
+        <p>Trang bạn đang tìm kiếm không tồn tại hoặc đã bị chuyển đi nơi khác.</p>
+
+        <a th:href="@{/}" class="btn-home">
+            Quay về trang chủ
+        </a>
+    </div>
+</div>
+
+</body>
+</html>

@@ -23,14 +23,14 @@ public class NctAuthController {
 
     @GetMapping("/login")
     public String nctLoginPage(Model model) {
-        model.addAttribute("nctPageTitle", "Đăng nhập - NCT Otaku Store");
+        model.addAttribute("nctPageTitle", "Đăng nhập - UmaCT");
         return "auth/nct-login";
     }
 
     @GetMapping("/register")
     public String nctRegisterPage(Model model) {
         model.addAttribute("nctUser", new NctUser());
-        model.addAttribute("nctPageTitle", "Đăng ký - NCT Otaku Store");
+        model.addAttribute("nctPageTitle", "Đăng ký - UmaCT");
         return "auth/nct-register";
     }
 

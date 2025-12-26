@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head th:replace="~{fragments/nct-head :: head(${pageTitle})}"></head>
+
+<body>
+
+<!-- Header -->
+<header th:replace="~{fragments/nct-header :: header}"></header>
+
+<div class="flex">
+    <!-- Sidebar -->
+    <aside th:replace="~{fragments/nct-sidebar :: sidebar(activePage=${activePage})}"></aside>
+
+    <!-- Main Content -->
+    <main class="main-content" layout:fragment="content">
+        <!-- Page-specific content will be inserted here -->
+    </main>
+</div>
+
+<!-- Footer -->
+<footer th:replace="~{fragments/nct-footer :: footer}"></footer>
+
+</body>
+</html>

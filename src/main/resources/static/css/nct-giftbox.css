@@ -1,0 +1,120 @@
+/* Reset mặc định của trình duyệt để full màn hình */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    background-color: #2c3e50; /* Màu nền tối cho nổi bật hộp quà */
+    font-family: 'Arial', sans-serif;
+}
+
+/* Container bao quanh hộp quà - CĂN GIỮA MỌI THỨ Ở ĐÂY */
+.main-container {
+    height: 100vh; /* Chiều cao bằng 100% khung nhìn */
+    display: flex;
+    flex-direction: column; /* Xếp dọc (Icon trên, chữ dưới) */
+    justify-content: center; /* Căn giữa chiều dọc */
+    align-items: center;     /* Căn giữa chiều ngang */
+}
+
+/* Style hộp quà */
+.gift-box {
+    color: #e74c3c; /* Màu đỏ quà tặng */
+    cursor: pointer;
+    transition: all 0.3s ease;
+    animation: bounce 2s infinite; /* Hiệu ứng nảy nảy mời gọi */
+}
+
+.gift-box:hover {
+    transform: scale(1.2) rotate(10deg); /* Phóng to và nghiêng khi di chuột */
+    color: #f1c40f; /* Đổi sang màu vàng khi hover */
+    filter: drop-shadow(0 0 15px gold); /* Phát sáng */
+}
+
+.gift-text {
+    margin-top: 20px;
+    color: white;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+/* Keyframe cho hiệu ứng nảy */
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+    40% {transform: translateY(-20px);}
+    60% {transform: translateY(-10px);}
+}
+
+/* --- PHẦN MODAL (QUAN TRỌNG) --- */
+.gacha-overlay {
+    display: none; /* Mặc định ẩn */
+    position: fixed;
+    z-index: 9999; /* Luôn nổi lên trên cùng */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85); /* Nền tối mờ */
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.5s;
+}
+
+.gacha-content {
+    position: relative;
+    text-align: center;
+}
+
+/* Style cho ảnh thẻ bài */
+.ssr-card {
+    width: 100%;
+    max-width: 450px; /* Điều chỉnh hiển thị cho vừa màn hình */
+    height: auto;
+    border-radius: 15px;
+
+    /* Hiệu ứng viền cầu vồng SSR */
+    box-shadow:
+        0 0 10px #ff0000,
+        0 0 20px #ff7f00,
+        0 0 30px #ffff00,
+        0 0 40px #00ff00,
+        0 0 50px #0000ff,
+        0 0 60px #4b0082,
+        0 0 70px #9400d3;
+
+    /* Animation xuất hiện kiểu phóng to */
+    animation: cardAppear 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.ssr-text {
+    color: #fff;
+    font-family: 'Arial', sans-serif;
+    margin-top: 15px;
+    text-shadow: 0 0 10px gold;
+    animation: blink 1s infinite;
+}
+
+.close-btn {
+    position: absolute;
+    top: -40px;
+    right: -40px;
+    font-size: 40px;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* Các Animation Keyframes */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes cardAppear {
+    0% { transform: scale(0) rotate(-10deg); opacity: 0; }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+@keyframes blink {
+    50% { opacity: 0.5; }
+}

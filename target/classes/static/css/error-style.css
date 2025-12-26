@@ -1,0 +1,70 @@
+/* Reset cơ bản */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #f0f2f5; /* Màu nền nhẹ nhàng */
+    font-family: 'Fredoka', sans-serif; /* Hoặc font mặc định của bạn */
+    height: 100vh; /* Chiều cao 100% màn hình */
+    display: flex; /* Dùng Flexbox */
+    justify-content: center; /* Căn giữa chiều ngang */
+    align-items: center; /* Căn giữa chiều dọc */
+    overflow: hidden; /* Tránh thanh cuộn thừa */
+}
+
+#error-container {
+    text-align: center; /* Căn giữa nội dung bên trong */
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1); /* Đổ bóng nhẹ cho đẹp */
+    max-width: 500px;
+    width: 90%;
+}
+
+/* Hiệu ứng ảnh nhân vật */
+.error-image {
+    max-width: 150px; /* Kích thước ảnh */
+    height: auto;
+    margin-bottom: 20px;
+}
+
+h1 {
+    font-size: 80px;
+    color: #ff6b6b; /* Màu đỏ nổi bật cho số 404 */
+    line-height: 1;
+    margin-bottom: 10px;
+}
+
+h2 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+p {
+    color: #666;
+    margin-bottom: 30px;
+}
+
+/* Nút quay về trang chủ */
+.btn-home {
+    display: inline-block;
+    padding: 12px 30px;
+    background-color: #4CAF50; /* Màu xanh lá chủ đạo */
+    color: white;
+    text-decoration: none;
+    border-radius: 50px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+}
+
+.btn-home:hover {
+    background-color: #45a049;
+    transform: translateY(-2px); /* Nút nổi lên khi di chuột vào */
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+}

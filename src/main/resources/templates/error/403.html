@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>403 - Khu vực cấm!</title>
+    <link rel="stylesheet" th:href="@{/css/error-style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div id="error-container">
+    <img th:src="@{/images/mayano.webp}" alt="Access Denied" class="error-image">
+
+    <div class="error-content">
+        <h1 style="color: #ff9800;">403</h1>
+        <h2>Dừng lại! Khu vực cấm!</h2>
+        <p>Xin lỗi Trainer, bạn không có đủ quyền hạn để truy cập vào khu vực này.</p>
+
+        <a th:href="@{/}" class="btn-home">
+            Quay về trang chủ
+        </a>
+    </div>
+</div>
+
+</body>
+</html>

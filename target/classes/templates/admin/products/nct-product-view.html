@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/nct-admin-head :: adminHead(pageTitle='Chi tiết Sản phẩm')}"></head>
+<body>
+<!-- Sidebar -->
+<div th:replace="~{fragments/nct-admin-sidebar :: adminSidebar(activePage='products')}"></div>
+
+<!-- Main Content -->
+<main class="main-content">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center nct-page-header">
+        <div>
+            <h1 class="h3 mb-2">Chi tiết Sản phẩm</h1>
+            <p class="mb-0" th:text="${nctProduct.nctProductName}"></p>
+        </div>
+        <div>
+            <a th:href="@{/admin/products/edit/{id}(id=${nctProduct.nctProductId})}" class="btn btn-warning me-2">
+                <i class="fas fa-edit me-2"></i>Chỉnh sửa
+            </a>
+            <a href="/admin/products" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Quay lại danh sách
+            </a>
+        </div>
+    </div>
+
+    <!-- Alert Messages -->
+    <div th:if="${nctSuccess}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle me-2"></i>
+        <span th:text="${nctSuccess}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${nctError}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        <span th:text="${nctError}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="row">
+        <!-- Left Column: Image and Description -->
+        <div class="col-lg-8">
+            <div class="card nct-card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0"><i class="fas fa-image me-2"></i>Hình ảnh & Mô tả</h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <img th:if="${nctProduct.nctImageUrl}" th:src="${nctProduct.nctImageUrl}" th:alt="${nctProduct.nctProductName}" class="img-fluid rounded" style="max-height: 400px;">
+                        <div th:unless="${nctProduct.nctImageUrl}" class="text-muted p-5 border rounded">
+                            <i class="fas fa-image fa-3x"></i>
+                            <p class="mt-2">Không có hình ảnh</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <h5>Mô tả sản phẩm</h5>
+                    <p th:if="${nctProduct.nctDescription}" th:text="${nctProduct.nctDescription}"></p>
+                    <p th:unless="${nctProduct.nctDescription}" class="text-muted fst-italic">Sản phẩm này chưa có mô tả.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Product Info -->
+        <div class="col-lg-4">
+            <div class="card nct-card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0"><i class="fas fa-info-circle me-2"></i>Thông tin chi tiết</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <strong>ID Sản phẩm</strong>
+                            <span th:text="${nctProduct.nctProductId}"></span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <strong>Danh mục</strong>
+                            <span th:text="${nctProduct.nctCategory?.nctCategoryName} ?: 'N/A'"></span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center" th:if="${nctProduct.nctOriginalPrice != null and nctProduct.nctOriginalPrice.doubleValue() > 0}">
+                            <strong>Giá gốc</strong>
+                            <span class="text-muted text-decoration-line-through" th:text="'₫' + ${#numbers.formatDecimal(nctProduct.nctOriginalPrice, 0, 'COMMA', 0, 'POINT')}"></span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <strong>Giá bán</strong>
+                            <span class="fw-bold text-danger" th:text="'₫' + ${#numbers.formatDecimal(nctProduct.nctPrice, 0, 'COMMA', 0, 'POINT')}"></span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <strong>Tồn kho</strong>
+                            <span th:text="${nctProduct.nctStockQuantity}"></span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <strong>Trạng thái</strong>
+                            <div>
+                                <form th:action="@{/admin/products/update-status/{id}(id=${nctProduct.nctProductId})}" method="post" class="d-inline">
+                                    <select name="status" class="form-select form-select-sm" onchange="this.form.submit()" style="width: auto;">
+                                        <option value="ACTIVE" th:selected="${nctProduct.nctStatus.name() == 'ACTIVE'}">Đang bán</option>
+                                        <option value="INACTIVE" th:selected="${nctProduct.nctStatus.name() == 'INACTIVE'}">Ngừng bán</option>
+                                    </select>
+                                </form>
+                            </div>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <strong>Ngày tạo</strong>
+                            <span th:text="${#temporals.format(nctProduct.nctCreatedAt, 'dd/MM/yyyy HH:mm')}"></span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <strong>Cập nhật lần cuối</strong>
+                            <span th:text="${#temporals.format(nctProduct.nctUpdatedAt, 'dd/MM/yyyy HH:mm')}"></span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
